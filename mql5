@@ -1,0 +1,42 @@
+
+// Mood EA mt5
+// Developer's site: forexroboteasy.com
+// Developed by: Forex Robot Easy Team
+
+// Include necessary libraries
+#include <Trade\Trade.mqh>
+#include <Trade\PositionInfo.mqh>
+#include <Indicators\Momentum.mqh>
+
+// Define constants
+#define RISK_PERCENTAGE 2 // Risk percentage for drawdown management
+
+// Initialize objects
+CTrade trade;
+CMomentum momentum;
+
+void OnTick()
+{
+    // Get current momentum value
+    double currentMomentum = momentum.iMomentum(NULL, 0, 14, PRICE_CLOSE, MODE_MAIN, 0);
+
+    // Check for oversold or overbought conditions
+    if (currentMomentum > 70)
+    {
+        // Sell order
+        double lotSize = NormalizeDouble(AccountBalance() * RISK_PERCENTAGE / 100 / MarketInfo(Symbol(), MODE_TICKVALUE), 2);
+        trade.Sell(lotSize);
+    }
+    else if (currentMomentum < 30)
+    {
+        // Buy order
+        double lotSize = NormalizeDouble(AccountBalance() * RISK_PERCENTAGE / 100 / MarketInfo(Symbol(), MODE_TICKVALUE), 2);
+        trade.Buy(lotSize);
+    }
+}
+
+void OnDeinit(const int reason)
+{
+    // Provide contact information for settings and personal bonus
+    Print('For settings and personal bonus, please contact Forex Robot Easy Team at info@forexroboteasy.com');
+}
